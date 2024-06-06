@@ -14,7 +14,7 @@ public class PostController {
 
     private final PostService postService;
 
-    // 게시글 생성
+    // 게시글 작성
     @PostMapping
     public PostDto createPost(@RequestBody PostDto postDto) {
         return postService.createPost(postDto);
@@ -25,5 +25,26 @@ public class PostController {
     public List<PostDto> getAllPostsDTO() {
         return postService.getAllPosts();
     }
+
+    // 선택된 글의 정보 조회
+    @GetMapping("/{postId}")
+    public PostDto getPostDTO(@PathVariable Long postId) {
+        return postService.getPostByID(postId);
+    }
+
+    // 게시글 수정
+    @PutMapping
+    public PostDto updatePost(@RequestBody PostDto postDto) {
+        return postService.updatePost(postDto);
+    }
+
+    // 게시글 삭제
+    @DeleteMapping("/{post_id}")
+    public void deletePost(@PathVariable Long post_id) {
+        postService.deltetPost(post_id);
+    }
+
+    //
+
 
 }

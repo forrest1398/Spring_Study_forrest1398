@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -34,8 +35,8 @@ public class PostService {
     public PostDto createPost(PostDto postDto) {
         Post a = new Post(
                 postDto.getTitle(),
-                postDto.getContent(),
-                postDto.getWriter()
+                postDto.getWriter(),
+                postDto.getContent()
         );
         Post com = postRepository.save(a);
         return new PostDto(
@@ -43,5 +44,39 @@ public class PostService {
                 com.getContent(),
                 com.getWriter()
         );
+    }
+
+    public PostDto getPostByID(Long postId) {
+        Optional<Post> com = postRepository.findById(postId);
+        return com.map(post -> new PostDto(
+                post.getTitle(),
+                post.getContent(),
+                post.getWriter()
+        )).orElse(null);
+    }
+
+    public PostDto updatePost(PostDto postDto) {
+
+        Optional<Post> a = postRepository.findById(postDto.getId());
+        if (a.isPresent()) {
+            Post updatedPost = new Post(
+                    a.get().getId(),
+                    postDto.getTitle(),
+                    a.get().getWriter(),
+                    postDto.getContent()
+            );
+            Post com = postRepository.save(updatedPost);
+            return new PostDto(
+                    com.getTitle(),
+                    com.getContent(),
+                    com.getWriter()
+            );
+        }
+        return null;
+
+    }
+
+    public void deltetPost(Long postId) {
+        postRepository.deleteById(postId);
     }
 }

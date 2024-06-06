@@ -1,6 +1,7 @@
 package com.jungle.spring_study_forrest1398.domain;
 
 
+import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 public abstract class BaseTimeEntity {
 
     @CreatedDate
+    @Column(updatable = false)
     @DateTimeFormat(pattern = "yyyy-MM-dd/HH:mm:ss")
     private LocalDateTime createdDate;
 
