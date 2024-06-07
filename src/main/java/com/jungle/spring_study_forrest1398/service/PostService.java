@@ -15,6 +15,20 @@ import java.util.Optional;
 public class PostService {
 
     private final PostRepository postRepository;
+    
+    public PostDto createPost(PostDto postDto) {
+        Post a = new Post(
+                postDto.getTitle(),
+                postDto.getWriter(),
+                postDto.getContent()
+        );
+        Post com = postRepository.save(a);
+        return new PostDto(
+                com.getTitle(),
+                com.getContent(),
+                com.getWriter()
+        );
+    }
 
     public List<PostDto> getAllPosts() {
         List<Post> posts = postRepository.findAll();
@@ -28,22 +42,6 @@ public class PostService {
             postDtos.add(postDto);
         }
         return postDtos;
-    }
-
-    ;
-
-    public PostDto createPost(PostDto postDto) {
-        Post a = new Post(
-                postDto.getTitle(),
-                postDto.getWriter(),
-                postDto.getContent()
-        );
-        Post com = postRepository.save(a);
-        return new PostDto(
-                com.getTitle(),
-                com.getContent(),
-                com.getWriter()
-        );
     }
 
     public PostDto getPostByID(Long postId) {
@@ -79,4 +77,5 @@ public class PostService {
     public void deltetPost(Long postId) {
         postRepository.deleteById(postId);
     }
+
 }
