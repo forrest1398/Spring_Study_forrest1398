@@ -6,6 +6,8 @@ import com.jungle.spring_study_forrest1398.dto.PostRequestDto;
 import com.jungle.spring_study_forrest1398.service.PostService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,8 +21,10 @@ public class PostController {
 
     // 게시글 작성
     @PostMapping
-    public Post createPost(@RequestBody PostRequestDto postRequestDto, HttpServletRequest request) {
-        return postService.createPost(postRequestDto, request);
+    public ResponseEntity<PostDetailDto> createPost(@RequestBody PostRequestDto postRequestDto, HttpServletRequest request) {
+        Post result = postService.createPost(postRequestDto, request);
+        PostDetailDto postDetailDto = new PostDetailDto(result);
+        return ResponseEntity.status(HttpStatus.CREATED).header("message", "hello").body(postDetailDto);
     }
 
     // 게시글 목록 조회
