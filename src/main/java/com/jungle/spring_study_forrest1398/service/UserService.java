@@ -4,7 +4,9 @@ import com.jungle.spring_study_forrest1398.domain.User;
 import com.jungle.spring_study_forrest1398.domain.UserRoleEnum;
 import com.jungle.spring_study_forrest1398.dto.LoginRequestDto;
 import com.jungle.spring_study_forrest1398.dto.SignupRequestDto;
+import com.jungle.spring_study_forrest1398.jwt.JwtUtil;
 import com.jungle.spring_study_forrest1398.repository.UserRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,8 +18,10 @@ import java.util.Optional;
 public class UserService {
     // ADMIN_TOKEN : 일단 여기에 위치
     private static final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
-
+    // Repository
     private final UserRepository userRepository;
+    // JWT
+    private final JwtUtil jwtUtil;
 
     @Transactional
     public void signup(SignupRequestDto signupRequestDto) {
@@ -46,7 +50,7 @@ public class UserService {
     }
 
     @Transactional
-    public void login(LoginRequestDto loginRequestDto) {
+    public void login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
         String username = loginRequestDto.getUsername();
         String password = loginRequestDto.getPassword();
         // 사용자 확인
@@ -57,5 +61,7 @@ public class UserService {
         if (!user.getPassword().equals(password)) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getUsername(), user.getRole()));
+
     }
 }

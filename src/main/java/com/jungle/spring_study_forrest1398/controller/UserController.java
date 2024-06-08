@@ -3,6 +3,7 @@ package com.jungle.spring_study_forrest1398.controller;
 import com.jungle.spring_study_forrest1398.dto.LoginRequestDto;
 import com.jungle.spring_study_forrest1398.dto.SignupRequestDto;
 import com.jungle.spring_study_forrest1398.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,8 +25,8 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequestDto loginRequestDto) {
-        userService.login(loginRequestDto);
+    public String login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
+        userService.login(loginRequestDto, response);
         return "success";
     }
 
