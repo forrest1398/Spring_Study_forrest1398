@@ -12,24 +12,24 @@ public class Post extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    long id;
+    private long id;
     @Column(nullable = false)
-    String title;
+    private String title;
     @Column(nullable = false)
-    String writer;
+    private String writer;
     @Column(nullable = true)
-    String content;
+    private String content;
 
-    /* Todo : 회원 api 구현시 추가될 필드
-    @ManyToOne // User 엔티티와의 ManyToOne 관계 설정
-    @JoinColumn(name = "user_id")
+    // name : 외래키 명
+    @ManyToOne
+    @JoinColumn(name = "USER_ID", nullable = false)
     private User user;
-    */
 
-    public Post(PostRequestDto postRequestDto) {
+    public Post(PostRequestDto postRequestDto, User user) {
         this.title = postRequestDto.getTitle();
         this.writer = postRequestDto.getWriter();
         this.content = postRequestDto.getContent();
+        this.user = user;
     }
 
     // 필드 업데이트 메서드

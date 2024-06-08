@@ -1,8 +1,10 @@
 package com.jungle.spring_study_forrest1398.controller;
 
 import com.jungle.spring_study_forrest1398.domain.Post;
+import com.jungle.spring_study_forrest1398.dto.PostDetailDto;
 import com.jungle.spring_study_forrest1398.dto.PostRequestDto;
 import com.jungle.spring_study_forrest1398.service.PostService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,8 +19,8 @@ public class PostController {
 
     // 게시글 작성
     @PostMapping
-    public Post createPost(@RequestBody PostRequestDto postRequestDto) {
-        return postService.createPost(postRequestDto);
+    public Post createPost(@RequestBody PostRequestDto postRequestDto, HttpServletRequest request) {
+        return postService.createPost(postRequestDto, request);
     }
 
     // 게시글 목록 조회
@@ -29,8 +31,8 @@ public class PostController {
 
     // 선택된 글의 정보 조회
     @GetMapping("/{postId}")
-    public Post getPostByID(@PathVariable Long postId) {
-        return postService.getPostByID(postId);
+    public PostDetailDto getPostByID(@PathVariable Long postId) {
+        return new PostDetailDto(postService.getPostByID(postId));
     }
 
     // 게시글 수정
