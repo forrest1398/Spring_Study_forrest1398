@@ -8,22 +8,19 @@ import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
 @Getter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public abstract class BaseTimeEntity {
+public abstract class Timestamped {
 
     @CreatedDate
     @Column(updatable = false)
-    @DateTimeFormat(pattern = "yyyy-MM-dd/HH:mm:ss")
-    private LocalDateTime createdDate;
+    private LocalDateTime createdAt;
 
     @LastModifiedDate
-    @DateTimeFormat(pattern = "yyyy-MM-dd/HH:mm:ss")
-    private LocalDateTime modifiedDate;
+    private LocalDateTime updatedAt;
 
 }

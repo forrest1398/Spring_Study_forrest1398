@@ -1,81 +1,49 @@
 package com.jungle.spring_study_forrest1398.service;
 
 import com.jungle.spring_study_forrest1398.domain.Post;
-import com.jungle.spring_study_forrest1398.dto.PostDto;
+import com.jungle.spring_study_forrest1398.dto.PostRequestDto;
 import com.jungle.spring_study_forrest1398.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class PostService {
 
     private final PostRepository postRepository;
-    
-    public PostDto createPost(PostDto postDto) {
-        Post a = new Post(
-                postDto.getTitle(),
-                postDto.getWriter(),
-                postDto.getContent()
+
+    @Transactional
+    public Post createPost(PostRequestDto postRequestDto) {
+        // Todo : null일 경우 예외처리 필요
+        Post post = new Post(postRequestDto);
+        return postRepository.save(post);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Post> getPosts() {
+        return postRepository.findAllByOrderByUpdatedAtDesc();
+    }
+
+    @Transactional
+    public Post getPostByID(Long postId) {
+        return postRepository.findById(postId).orElseThrow(null);
+    }
+
+    @Transactional
+    public Long updatePost(Long postId, PostRequestDto postRequestDto) {
+        Post post = postRepository.findById(postId).orElseThrow(
+                () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
         );
-        Post com = postRepository.save(a);
-        return new PostDto(
-                com.getTitle(),
-                com.getContent(),
-                com.getWriter()
-        );
+        post.update(postRequestDto);
+        return post.getId();
     }
 
-    public List<PostDto> getAllPosts() {
-        List<Post> posts = postRepository.findAll();
-        List<PostDto> postDtos = new ArrayList<>();
-        for (Post post : posts) {
-            PostDto postDto = new PostDto(
-                    post.getTitle(),
-                    post.getContent(),
-                    post.getWriter()
-            );
-            postDtos.add(postDto);
-        }
-        return postDtos;
-    }
-
-    public PostDto getPostByID(Long postId) {
-        Optional<Post> com = postRepository.findById(postId);
-        return com.map(post -> new PostDto(
-                post.getTitle(),
-                post.getContent(),
-                post.getWriter()
-        )).orElse(null);
-    }
-
-    public PostDto updatePost(PostDto postDto) {
-
-        Optional<Post> a = postRepository.findById(postDto.getId());
-        if (a.isPresent()) {
-            Post updatedPost = new Post(
-                    a.get().getId(),
-                    postDto.getTitle(),
-                    a.get().getWriter(),
-                    postDto.getContent()
-            );
-            Post com = postRepository.save(updatedPost);
-            return new PostDto(
-                    com.getTitle(),
-                    com.getContent(),
-                    com.getWriter()
-            );
-        }
-        return null;
-
-    }
-
-    public void deltetPost(Long postId) {
+    @Transactional
+    public Long deletePost(Long postId) {
         postRepository.deleteById(postId);
+        return postId;
     }
-
 }

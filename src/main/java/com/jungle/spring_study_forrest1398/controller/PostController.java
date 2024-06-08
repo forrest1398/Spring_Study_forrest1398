@@ -1,6 +1,7 @@
 package com.jungle.spring_study_forrest1398.controller;
 
-import com.jungle.spring_study_forrest1398.dto.PostDto;
+import com.jungle.spring_study_forrest1398.domain.Post;
+import com.jungle.spring_study_forrest1398.dto.PostRequestDto;
 import com.jungle.spring_study_forrest1398.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -16,33 +17,32 @@ public class PostController {
 
     // 게시글 작성
     @PostMapping
-    public PostDto createPost(@RequestBody PostDto postDto) {
-        return postService.createPost(postDto);
+    public Post createPost(@RequestBody PostRequestDto postRequestDto) {
+        return postService.createPost(postRequestDto);
     }
 
     // 게시글 목록 조회
     @GetMapping
-    public List<PostDto> getAllPostsDTO() {
-        return postService.getAllPosts();
+    public List<Post> getPosts() {
+        return postService.getPosts();
     }
 
     // 선택된 글의 정보 조회
     @GetMapping("/{postId}")
-    public PostDto getPostDTO(@PathVariable Long postId) {
+    public Post getPostByID(@PathVariable Long postId) {
         return postService.getPostByID(postId);
     }
 
     // 게시글 수정
-    @PutMapping
-    public PostDto updatePost(@RequestBody PostDto postDto) {
-        return postService.updatePost(postDto);
+    @PutMapping("/{postId}")
+    public Long updatePost(@PathVariable Long postId, @RequestBody PostRequestDto postRequestDto) {
+        return postService.updatePost(postId, postRequestDto);
     }
 
     // 게시글 삭제
-    @DeleteMapping("/{post_id}")
-    public void deletePost(@PathVariable Long post_id) {
-        postService.deltetPost(post_id);
+    @DeleteMapping("/{postId}")
+    public Long deletePost(@PathVariable Long postId) {
+        return postService.deletePost(postId);
     }
-
 
 }

@@ -1,15 +1,14 @@
 package com.jungle.spring_study_forrest1398.domain;
 
+import com.jungle.spring_study_forrest1398.dto.PostRequestDto;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
-public class Post extends BaseTimeEntity {
+public class Post extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -26,10 +25,18 @@ public class Post extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
     */
-    public Post(String title, String writer, String content) {
-        this.title = title;
-        this.writer = writer;
-        this.content = content;
+
+    public Post(PostRequestDto postRequestDto) {
+        this.title = postRequestDto.getTitle();
+        this.writer = postRequestDto.getWriter();
+        this.content = postRequestDto.getContent();
+    }
+
+    // 필드 업데이트 메서드
+    public void update(PostRequestDto postRequestDto) {
+        this.title = postRequestDto.getTitle();
+        this.writer = postRequestDto.getWriter();
+        this.content = postRequestDto.getContent();
     }
 
 }
