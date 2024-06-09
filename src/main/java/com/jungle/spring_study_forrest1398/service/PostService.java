@@ -41,7 +41,7 @@ public class PostService {
                 User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
                         () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
                 );
-                
+                postRequestDto.setWriter(claims.getSubject());
                 // 게시글 생성
                 Post post = new Post(postRequestDto, user);
                 return postRepository.save(post);
