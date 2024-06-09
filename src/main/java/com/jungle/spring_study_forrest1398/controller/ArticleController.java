@@ -2,10 +2,10 @@ package com.jungle.spring_study_forrest1398.controller;
 
 import com.jungle.spring_study_forrest1398.common.ResponseDto;
 import com.jungle.spring_study_forrest1398.common.StatusEnum;
-import com.jungle.spring_study_forrest1398.domain.Post;
-import com.jungle.spring_study_forrest1398.dto.PostDetailDto;
-import com.jungle.spring_study_forrest1398.dto.PostRequestDto;
-import com.jungle.spring_study_forrest1398.service.PostService;
+import com.jungle.spring_study_forrest1398.domain.Article;
+import com.jungle.spring_study_forrest1398.dto.ArticleDetailDto;
+import com.jungle.spring_study_forrest1398.dto.ArticleRequestDto;
+import com.jungle.spring_study_forrest1398.service.ArticleService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -18,15 +18,15 @@ import java.util.List;
 @RestController
 @RequestMapping("/post")// class level 맵핑
 @RequiredArgsConstructor // DI
-public class PostController {
+public class ArticleController {
 
-    private final PostService postService;
+    private final ArticleService articleService;
 
     // 게시글 작성
     @PostMapping
-    public ResponseEntity<ResponseDto> createPost(@RequestBody PostRequestDto postRequestDto, HttpServletRequest request) {
-        Post result = postService.createPost(postRequestDto, request);
-        PostDetailDto postDetailDto = new PostDetailDto(result);
+    public ResponseEntity<ResponseDto> createPost(@RequestBody ArticleRequestDto articleRequestDto, HttpServletRequest request) {
+        Article result = articleService.createPost(articleRequestDto, request);
+        ArticleDetailDto articleDetailDto = new ArticleDetailDto(result);
 
         // 헤더 설정
         HttpHeaders header = new HttpHeaders();
@@ -36,7 +36,7 @@ public class PostController {
         ResponseDto dto = new ResponseDto(
                 StatusEnum.OK,
                 StatusEnum.OK.getMessage(),
-                postDetailDto
+                articleDetailDto
         );
 
         // 응답 반환
@@ -49,14 +49,14 @@ public class PostController {
     @GetMapping
     public ResponseEntity<ResponseDto> getPosts() {
         // dto 변환
-        List<Post> posts = postService.getPosts();
-        List<PostDetailDto> postDetailDtoList = posts.stream().map(PostDetailDto::new).toList();
+        List<Article> articles = articleService.getPosts();
+        List<ArticleDetailDto> articleDetailDtoList = articles.stream().map(ArticleDetailDto::new).toList();
 
         // ResponseDto의 status, message, data 설정
         ResponseDto dto = new ResponseDto(
                 StatusEnum.OK,
                 StatusEnum.OK.getMessage(),
-                postDetailDtoList
+                articleDetailDtoList
         );
 
         // 응답 반환
@@ -68,14 +68,14 @@ public class PostController {
     @GetMapping("/{postId}")
     public ResponseEntity<ResponseDto> getPostByID(@PathVariable Long postId) {
         // dto 변환
-        Post posts = postService.getPostByID(postId);
-        PostDetailDto postDetailDto = new PostDetailDto(posts);
+        Article posts = articleService.getPostByID(postId);
+        ArticleDetailDto articleDetailDto = new ArticleDetailDto(posts);
 
         // ResponseDto의 status, message, data 설정
         ResponseDto dto = new ResponseDto(
                 StatusEnum.OK,
                 StatusEnum.OK.getMessage(),
-                postDetailDto
+                articleDetailDto
         );
 
         // 응답 반환
@@ -86,14 +86,14 @@ public class PostController {
     //todo: 서비스에서 jwt인증, 작성자이름 넣기
     // 게시글 수정
     @PutMapping("/{postId}")
-    public Long updatePost(@PathVariable Long postId, @RequestBody PostRequestDto postRequestDto) {
-        return postService.updatePost(postId, postRequestDto);
+    public Long updatePost(@PathVariable Long postId, @RequestBody ArticleRequestDto articleRequestDto) {
+        return articleService.updatePost(postId, articleRequestDto);
     }
 
     // 게시글 삭제
     @DeleteMapping("/{postId}")
     public Long deletePost(@PathVariable Long postId) {
-        return postService.deletePost(postId);
+        return articleService.deletePost(postId);
     }
 
 }

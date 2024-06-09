@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Entity
 @NoArgsConstructor
-public class User {
+public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -23,13 +23,13 @@ public class User {
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private UserRoleEnum role;
+    private MemberRoleEnum role;
 
     @OneToMany
-    List<Post> posts = new ArrayList<>();
+    List<Article> articles = new ArrayList<>();
 
 
-    public User(String username, String password, UserRoleEnum role) {
+    public Member(String username, String password, MemberRoleEnum role) {
         this.username = username;
         this.password = password;
         this.role = role;

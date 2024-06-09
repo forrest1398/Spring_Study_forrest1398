@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class PostRequestDto {
+public class ArticleRequestDto {
     String title;
     String writer;
     String content;

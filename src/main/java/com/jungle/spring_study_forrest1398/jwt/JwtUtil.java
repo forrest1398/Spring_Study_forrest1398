@@ -1,6 +1,6 @@
 package com.jungle.spring_study_forrest1398.jwt;
 
-import com.jungle.spring_study_forrest1398.domain.UserRoleEnum;
+import com.jungle.spring_study_forrest1398.domain.MemberRoleEnum;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -50,7 +50,7 @@ public class JwtUtil {
     }
 
     // 토큰 생성
-    public String createToken(String username, UserRoleEnum role) {
+    public String createToken(String username, MemberRoleEnum role) {
         Date date = new Date();
 
         return BEARER_PREFIX +

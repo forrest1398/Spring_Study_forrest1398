@@ -1,11 +1,11 @@
 package com.jungle.spring_study_forrest1398.service;
 
-import com.jungle.spring_study_forrest1398.domain.Post;
-import com.jungle.spring_study_forrest1398.domain.User;
-import com.jungle.spring_study_forrest1398.dto.PostRequestDto;
+import com.jungle.spring_study_forrest1398.domain.Article;
+import com.jungle.spring_study_forrest1398.domain.Member;
+import com.jungle.spring_study_forrest1398.dto.ArticleRequestDto;
 import com.jungle.spring_study_forrest1398.jwt.JwtUtil;
-import com.jungle.spring_study_forrest1398.repository.PostRepository;
-import com.jungle.spring_study_forrest1398.repository.UserRepository;
+import com.jungle.spring_study_forrest1398.repository.ArticleRepository;
+import com.jungle.spring_study_forrest1398.repository.MemberRepository;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -16,15 +16,15 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class PostService {
+public class ArticleService {
 
-    private final PostRepository postRepository;
-    private final UserRepository userRepository;
+    private final ArticleRepository articleRepository;
+    private final MemberRepository memberRepository;
     private final JwtUtil jwtUtil;
 
 
     @Transactional
-    public Post createPost(PostRequestDto postRequestDto, HttpServletRequest request) {
+    public Article createPost(ArticleRequestDto articleRequestDto, HttpServletRequest request) {
         // Todo : null일 경우 예외처리 필요
         String token = jwtUtil.resolveToken(request);
 
@@ -38,13 +38,13 @@ public class PostService {
                 claims = jwtUtil.getUserInfoFromToken(token);
 
                 // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
-                User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
+                Member member = memberRepository.findByUsername(claims.getSubject()).orElseThrow(
                         () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
                 );
-                postRequestDto.setWriter(claims.getSubject());
+                articleRequestDto.setWriter(claims.getSubject());
                 // 게시글 생성
-                Post post = new Post(postRequestDto, user);
-                return postRepository.save(post);
+                Article article = new Article(articleRequestDto, member);
+                return articleRepository.save(article);
             }
             // 유효하지 않다면 예외처리
             else {
@@ -58,27 +58,27 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public List<Post> getPosts() {
-        return postRepository.findAllByOrderByUpdatedAtDesc();
+    public List<Article> getPosts() {
+        return articleRepository.findAllByOrderByUpdatedAtDesc();
     }
 
     @Transactional
-    public Post getPostByID(Long postId) {
-        return postRepository.findById(postId).orElseThrow(null);
+    public Article getPostByID(Long postId) {
+        return articleRepository.findById(postId).orElseThrow(null);
     }
 
     @Transactional
-    public Long updatePost(Long postId, PostRequestDto postRequestDto) {
-        Post post = postRepository.findById(postId).orElseThrow(
+    public Long updatePost(Long postId, ArticleRequestDto articleRequestDto) {
+        Article article = articleRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
         );
-        post.update(postRequestDto);
-        return post.getId();
+        article.update(articleRequestDto);
+        return article.getId();
     }
 
     @Transactional
     public Long deletePost(Long postId) {
-        postRepository.deleteById(postId);
+        articleRepository.deleteById(postId);
         return postId;
     }
 }
