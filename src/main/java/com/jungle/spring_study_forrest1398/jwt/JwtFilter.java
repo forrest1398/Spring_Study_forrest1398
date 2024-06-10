@@ -26,7 +26,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
+        System.out.println("Reqeust:" + request.getRequestURI() + "," + request.getMethod());
         //request에서 Authorization 헤더를 찾음
         String authrization = request.getHeader("Authorization");
         //Authorization 헤더 검증
@@ -40,6 +40,9 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+        // 이거 어캄?
+
+
         //토큰에서 username과 role 획득
         Claims userInfo = jwtUtil.getUserInfoFromToken(authrization.split(" ")[1]);
         String username = userInfo.get("username", String.class);

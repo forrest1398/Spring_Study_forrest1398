@@ -24,7 +24,7 @@ public class SecurityConfig {
     //AuthenticationManager가 인자로 받을 AuthenticationConfiguraion 객체 생성자 주입
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JwtUtil jwtUtil;
-    
+
     // LoginFilter에서 사용하는 AuthenticationManager를 Bean 등록
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -66,7 +66,9 @@ public class SecurityConfig {
         //경로별 인가 작업
         http.authorizeHttpRequests(authorize -> authorize
                 // 누구에게나 열린 경로
-                .requestMatchers("/member/login", "/member/signup", "/article").permitAll()
+                .requestMatchers("/member/login", "/member/signup").permitAll()
+                // 작성의 post
+                .requestMatchers(HttpMethod.GET, "/article").permitAll()
                 // "/article/articleId" 경로는 get요청만 열린 경로로 설정
                 .requestMatchers(HttpMethod.GET, "/article/**").permitAll()
                 // "ADMIN" 권한을 가진, 관리자만 접근 가능한 경로

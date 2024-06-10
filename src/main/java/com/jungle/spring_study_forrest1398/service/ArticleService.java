@@ -57,8 +57,9 @@ public class ArticleService {
 //                () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
                 IllegalArgumentException::new
         );
-        if (article.getWriter() != claims.get("username", String.class))
+        if (!article.getWriter().equals(claims.get("username", String.class)))
             throw new IllegalArgumentException("게시글의 작성자가 아닙니다.");
+        articleRequestDto.setWriter(claims.get("username", String.class));
         article.update(articleRequestDto);
         return article;
     }
@@ -70,7 +71,7 @@ public class ArticleService {
         Article article = articleRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
         );
-        if (article.getWriter() != claims.get("username", String.class))
+        if (!article.getWriter().equals(claims.get("username", String.class)))
             throw new IllegalArgumentException("게시글의 작성자가 아닙니다.");
         articleRepository.deleteById(postId);
         return postId;
