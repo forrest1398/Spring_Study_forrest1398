@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class Article extends Timestamped {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Column(nullable = false)
     private String title;

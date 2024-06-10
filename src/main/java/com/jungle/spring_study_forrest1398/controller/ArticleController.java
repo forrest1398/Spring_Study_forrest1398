@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/post")// class level 맵핑
+@RequestMapping("/article")// class level 맵핑
 @RequiredArgsConstructor // DI
 public class ArticleController {
 
