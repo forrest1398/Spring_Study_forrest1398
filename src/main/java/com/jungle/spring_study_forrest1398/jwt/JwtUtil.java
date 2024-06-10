@@ -1,6 +1,8 @@
 package com.jungle.spring_study_forrest1398.jwt;
 
+import com.jungle.spring_study_forrest1398.domain.Member;
 import com.jungle.spring_study_forrest1398.domain.MemberRoleEnum;
+import com.jungle.spring_study_forrest1398.repository.MemberRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -14,6 +16,7 @@ import org.springframework.util.StringUtils;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -27,6 +30,7 @@ public class JwtUtil {
     private static final String BEARER_PREFIX = "Bearer ";
     // 토큰 만료시간
     private static final long TOKEN_TIME = 60 * 60 * 1000L;
+    private MemberRepository memberRepository;
 
     //시크릿 키
     @Value("${jwt.secret.key}")
@@ -68,8 +72,13 @@ public class JwtUtil {
     // 토큰 검증
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
+
+            // DB 무결성을 위해서 DB 확인
+            Claims claims = getUserInfoFromToken(token);
+            Optional<Member> member = memberRepository.findByUsername(claims.get("username", String.class));
+            if (member.isPresent())
+                return true;
+
         } catch (SecurityException | MalformedJwtException e) {
             log.info("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
         } catch (ExpiredJwtException e) {

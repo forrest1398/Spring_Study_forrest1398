@@ -9,6 +9,7 @@ import java.util.List;
 @Repository
 public interface ArticleRepository extends JpaRepository<Article, Long> {
 
-    List<Article> findAllByOrderByUpdatedAtDesc();
+    // 생성 날짜 기준 내림차순으로 받아오기
+    List<Article> findAllByOrderByCreatedAtDesc();
 }
 

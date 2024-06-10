@@ -5,6 +5,7 @@ import com.jungle.spring_study_forrest1398.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -23,14 +24,7 @@ public class SecurityConfig {
     //AuthenticationManager가 인자로 받을 AuthenticationConfiguraion 객체 생성자 주입
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JwtUtil jwtUtil;
-//
-//    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil) {
-//
-//        this.authenticationConfiguration = authenticationConfiguration;
-//        this.jwtUtil = jwtUtil;
-//    }
-
-
+    
     // LoginFilter에서 사용하는 AuthenticationManager를 Bean 등록
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -69,11 +63,12 @@ public class SecurityConfig {
         http
                 .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
-
         //경로별 인가 작업
         http.authorizeHttpRequests(authorize -> authorize
                 // 누구에게나 열린 경로
-                .requestMatchers("/member/login", "/member/signup", "/article", "/article/**").permitAll()
+                .requestMatchers("/member/login", "/member/signup", "/article").permitAll()
+                // "/article/articleId" 경로는 get요청만 열린 경로로 설정
+                .requestMatchers(HttpMethod.GET, "/article/**").permitAll()
                 // "ADMIN" 권한을 가진, 관리자만 접근 가능한 경로
                 .requestMatchers("/admin").hasRole("ADMIN")
                 // 그 외의 경로

@@ -58,9 +58,6 @@ public class MemberService {
     public void login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
         String username = loginRequestDto.getUsername();
         String password = bCryptPasswordEncoder.encode(loginRequestDto.getPassword());
-        System.out.println("---------------");
-        System.out.println(password);
-        System.out.println("$2a$10$Pm2bHf1xpuNWWUcXlR2beOwfaYMeOabJyEAAyT0BDK6kkAC8QndnO");
         // 사용자 확인
         Member member = memberRepository.findByUsername(username).orElseThrow(
                 () -> new IllegalArgumentException("등록된 사용자가 없습니다.")

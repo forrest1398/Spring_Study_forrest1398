@@ -28,35 +28,11 @@ public class ArticleService {
         // Todo : null일 경우 예외처리 필요
         String token = jwtUtil.resolveToken(request);
         Claims claims = jwtUtil.getUserInfoFromToken(token);
-//
-//        //토큰이 있는 경우
-//        if (token != null) {
-//            // 토큰이 유효한지 검증
-//            if (jwtUtil.validateToken(token)) {
-//                // 유효하다면, 토큰에서 사용자 데이터 가져오기
-//                claims =
-//                // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
-//                Member member = memberRepository.findByUsername(claims.getSubject()).orElseThrow(
-//                        () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
-//                );
-//                articleRequestDto.setWriter(claims.getSubject());
-//                // 게시글 생성
-//                Article article = new Article(articleRequestDto, member);
-//                return articleRepository.save(article);
-//            }
-//            // 유효하지 않다면 예외처리
-//            else {
-//                throw new IllegalArgumentException("Token invalid");
-//            }
-//        }
-//        // 토큰이 없다면
-//        else {
-//            return null;
-//        }
-        System.out.println(claims.get("username", String.class));
+
         Member member = memberRepository.findByUsername(claims.get("username", String.class)).orElseThrow(
                 () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
         );
+
         // 게시글 생성
         articleRequestDto.setWriter(claims.get("username", String.class));
         Article article = new Article(articleRequestDto, member);
@@ -65,7 +41,7 @@ public class ArticleService {
 
     @Transactional(readOnly = true)
     public List<Article> getPosts() {
-        return articleRepository.findAllByOrderByUpdatedAtDesc();
+        return articleRepository.findAllByOrderByCreatedAtDesc();
     }
 
     @Transactional
@@ -74,16 +50,28 @@ public class ArticleService {
     }
 
     @Transactional
-    public Long updatePost(Long postId, ArticleRequestDto articleRequestDto) {
+    public Article updatePost(Long postId, ArticleRequestDto articleRequestDto, HttpServletRequest request) {
+        String token = jwtUtil.resolveToken(request);
+        Claims claims = jwtUtil.getUserInfoFromToken(token);
         Article article = articleRepository.findById(postId).orElseThrow(
-                () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
+//                () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
+                IllegalArgumentException::new
         );
+        if (article.getWriter() != claims.get("username", String.class))
+            throw new IllegalArgumentException("게시글의 작성자가 아닙니다.");
         article.update(articleRequestDto);
-        return article.getId();
+        return article;
     }
 
     @Transactional
-    public Long deletePost(Long postId) {
+    public Long deletePost(Long postId, HttpServletRequest request) {
+        String token = jwtUtil.resolveToken(request);
+        Claims claims = jwtUtil.getUserInfoFromToken(token);
+        Article article = articleRepository.findById(postId).orElseThrow(
+                () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
+        );
+        if (article.getWriter() != claims.get("username", String.class))
+            throw new IllegalArgumentException("게시글의 작성자가 아닙니다.");
         articleRepository.deleteById(postId);
         return postId;
     }

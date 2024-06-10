@@ -45,7 +45,6 @@ public class JwtFilter extends OncePerRequestFilter {
         String username = userInfo.get("username", String.class);
         String role = userInfo.get("auth", String.class);
         MemberRoleEnum roleEnum = MemberRoleEnum.valueOf(role);
-
         //userEntity를 생성하여 값 set
         Member userEntity = new Member(username, "tempPassword", roleEnum);
 

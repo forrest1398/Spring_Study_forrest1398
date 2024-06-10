@@ -65,12 +65,11 @@ public class ArticleController {
     }
 
     // 선택된 글의 정보 조회
-    @GetMapping("/{postId}")
-    public ResponseEntity<ResponseDto> getPostByID(@PathVariable Long postId) {
+    @GetMapping("/{articleId}")
+    public ResponseEntity<ResponseDto> getPostByID(@PathVariable("articleId") Long articleId) {
         // dto 변환
-        Article posts = articleService.getPostByID(postId);
+        Article posts = articleService.getPostByID(articleId);
         ArticleDetailDto articleDetailDto = new ArticleDetailDto(posts);
-
         // ResponseDto의 status, message, data 설정
         ResponseDto dto = new ResponseDto(
                 StatusEnum.OK,
@@ -85,15 +84,40 @@ public class ArticleController {
 
     //todo: 서비스에서 jwt인증, 작성자이름 넣기
     // 게시글 수정
-    @PutMapping("/{postId}")
-    public Long updatePost(@PathVariable Long postId, @RequestBody ArticleRequestDto articleRequestDto) {
-        return articleService.updatePost(postId, articleRequestDto);
+    @PutMapping("/{articleId}")
+    public ResponseEntity<ResponseDto> updatePost(@PathVariable("articleId") Long articleId, @RequestBody ArticleRequestDto articleRequestDto, HttpServletRequest request) {
+
+        // dto 변환
+        Article posts = articleService.updatePost(articleId, articleRequestDto, request);
+        ArticleDetailDto articleDetailDto = new ArticleDetailDto(posts);
+        // ResponseDto의 status, message, data 설정
+        ResponseDto dto = new ResponseDto(
+                StatusEnum.OK,
+                StatusEnum.OK.getMessage(),
+                articleDetailDto
+        );
+
+        // 응답 반환
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(dto);
     }
 
     // 게시글 삭제
-    @DeleteMapping("/{postId}")
-    public Long deletePost(@PathVariable Long postId) {
-        return articleService.deletePost(postId);
+    @DeleteMapping("/{articleId}")
+    public ResponseEntity<ResponseDto> deletePost(@PathVariable("articleId") Long articleId, HttpServletRequest request) {
+
+        // dto 변환
+        Long deletedId = articleService.deletePost(articleId, request);
+        // ResponseDto의 status, message, data 설정
+        ResponseDto dto = new ResponseDto(
+                StatusEnum.OK,
+                StatusEnum.OK.getMessage(),
+                "성공적으로 게시글(id : " + deletedId.toString() + ")을 삭제했습니다."
+        );
+
+        // 응답 반환
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(dto);
     }
 
 }
